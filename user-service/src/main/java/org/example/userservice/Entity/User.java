@@ -1,4 +1,4 @@
-package Entity;
+package org.example.userservice.Entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +26,4 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String phone;
-    @Column(nullable = false)
-    private String location;
 }
