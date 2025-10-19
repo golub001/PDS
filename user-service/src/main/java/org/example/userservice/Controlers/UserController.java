@@ -1,5 +1,6 @@
 package org.example.userservice.Controlers;
 
+import org.example.userservice.DTO.UserChangePhone;
 import org.example.userservice.DTO.UserDto;
 import org.example.userservice.Entity.User;
 
@@ -46,6 +47,19 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body("User deleted");
         }
         else  {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+        }
+    }
+    @PatchMapping("/change-phone")
+    public ResponseEntity<?> updateUser(@RequestBody UserChangePhone NewPhoneDto) {
+        User user= (User) userRepository.getUsersByEmail(NewPhoneDto.getEmail())
+                .orElse(null);
+        if(user!=null) {
+            user.setPhone(NewPhoneDto.getPhone());
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        }
+        else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
     }

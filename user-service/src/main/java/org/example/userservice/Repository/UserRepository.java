@@ -8,12 +8,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Integer> {
     @Query("select firstName from user")
     List<String> getAllUserNames();
 
     Boolean existsByEmail(String email);
+
+    Optional<?> getUsersByEmail(String email);
 
 
     @Transactional
