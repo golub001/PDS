@@ -1,18 +1,10 @@
 package org.example.userservice.Controlers;
 
+import lombok.RequiredArgsConstructor;
 import org.example.userservice.DTO.UserChangePhone;
 import org.example.userservice.DTO.UserDto;
-import org.example.userservice.Entity.User;
-
-
-
-import org.example.userservice.Repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.http.HttpStatus;
+import org.example.userservice.Service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,46 +13,26 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
+
+    private final UserService userService;
 
     @GetMapping
     public List<UserDto> findAll() {
-        List<User> list= userRepository.findAll();
-        return list.stream().map(x->modelMapper.map(x,UserDto.class)).toList();
+        return userService.findAll();
     }
+
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
-        User user=modelMapper.map(userDto,User.class);
-        if((userRepository.existsByEmail(userDto.getEmail()))==false) {
-            userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(user);
-        }
-        else  {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("That email already exists");
-        }
+        return userService.addUser(userDto);
     }
-    @Transactional
+
     @DeleteMapping("/delete/{email}")
     public ResponseEntity<?> deleteUser(@PathVariable("email") String email) {
-        if(userRepository.existsByEmail(email) && (userRepository.deleteByEmail(email))>0){
-            return ResponseEntity.status(HttpStatus.OK).body("User deleted");
-        }
-        else  {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
-        }
+        return userService.deleteUser(email);
     }
+
     @PatchMapping("/change-phone")
-    public ResponseEntity<?> updateUser(@RequestBody UserChangePhone NewPhoneDto) {
-        User user= (User) userRepository.getUsersByEmail(NewPhoneDto.getEmail())
-                .orElse(null);
-        if(user!=null) {
-            user.setPhone(NewPhoneDto.getPhone());
-            userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
-        }
+    public ResponseEntity<?> updateUser(@RequestBody UserChangePhone newPhoneDto) {
+        return userService.updateUser(newPhoneDto);
     }
 }
