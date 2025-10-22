@@ -35,4 +35,9 @@ public class UserController {
     public ResponseEntity<?> updateUser(@RequestBody UserChangePhone newPhoneDto) {
         return userService.updateUser(newPhoneDto);
     }
+
+    @GetMapping("{email}")
+    public ResponseEntity<?> GetId(@PathVariable("email") String email) {
+        return userService.findByEmail(email);
+    }
 }

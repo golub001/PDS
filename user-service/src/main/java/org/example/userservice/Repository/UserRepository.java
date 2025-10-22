@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
     Optional<?> getUsersByEmail(String email);
 
+    @Query("SELECT u.id FROM user u WHERE u.email = :email")
+    Optional<?> getUserIdByEmail(@Param("email") String email);
 
     @Transactional
     @Modifying

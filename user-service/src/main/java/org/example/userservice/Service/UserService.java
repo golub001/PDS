@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,14 @@ public class UserService {
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .toList();
     }
-
+    public ResponseEntity<?> findByEmail(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Daj korisnik ne postoji");
+        }
+        Optional<?> id=userRepository.getUserIdByEmail(email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(id);
+    }
     public ResponseEntity<?> addUser(UserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
