@@ -14,7 +14,7 @@ import lombok.Setter;
 public class ProductDto {
     @NotBlank(message = "Morate uneti ime")
     private String name;
-
+    @NotBlank(message = "Morate uneti opis")
     private String description;
 
     @NotNull(message = "Morate uneti cenu")

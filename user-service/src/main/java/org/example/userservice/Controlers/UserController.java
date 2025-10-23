@@ -1,5 +1,6 @@
 package org.example.userservice.Controlers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.userservice.DTO.UserChangePhone;
 import org.example.userservice.DTO.UserDto;
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> addUser(@Valid @RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
 
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @PatchMapping("/change-phone")
-    public ResponseEntity<?> updateUser(@RequestBody UserChangePhone newPhoneDto) {
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserChangePhone newPhoneDto) {
         return userService.updateUser(newPhoneDto);
     }
 
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    public UserDto  getUserById(@PathVariable("id") Integer id) {
+    public UserDto getUserById(@PathVariable("id") Integer id) {
         return userService.findById(id);
     }
 }

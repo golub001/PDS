@@ -8,7 +8,6 @@ import org.example.orderservice.Service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.PublicKey;
 import java.util.List;
 
 @RestController
@@ -19,7 +18,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> create(@RequestBody @Valid ProductDto dto) {
+    public ResponseEntity<?> create(@Valid @RequestBody ProductDto dto) {
         return productService.create(dto);
     }
 
@@ -34,17 +33,19 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") int id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable int id) {
         return productService.deleteProduct(id);
     }
 
     @PatchMapping("/{id}/price")
-    public ResponseEntity<?> updateProductPrice(@PathVariable("id") int id,
-                                                @RequestBody ProductPriceDto priceUpdateDTO) {
+    public ResponseEntity<?> updateProductPrice(@PathVariable int id,
+                                                @Valid @RequestBody ProductPriceDto priceUpdateDTO) {
         return productService.updateProductPrice(id, priceUpdateDTO);
     }
-    @PatchMapping("/{name}")
-    public ResponseEntity<?> getIdfromname(@PathVariable("name") String name) {
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getIdFromName(@PathVariable String name) {
         return productService.getbyName(name);
     }
+
 }

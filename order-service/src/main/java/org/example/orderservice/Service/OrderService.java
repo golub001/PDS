@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -96,5 +97,14 @@ public class OrderService {
         Float asd=productDto.getPrice()*order.getQuantity();
         details.setFullprice(asd);
         return ResponseEntity.ok(details);
+    }
+    @Transactional
+    public ResponseEntity<?> deleteOrder(Integer id) {
+        if (!orderRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Order with id " + id + " not found");
+        }
+        orderRepository.deleteById(id);
+        return ResponseEntity.ok("Order deleted successfully");
     }
 }
