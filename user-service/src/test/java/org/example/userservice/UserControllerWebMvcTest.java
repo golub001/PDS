@@ -8,15 +8,19 @@ import org.example.userservice.Service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean; // Koristi se MockBean
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.Mockito.doReturn;
+// Importi za Mockito
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn; // Dodaj doReturn
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -26,17 +30,20 @@ public class UserControllerWebMvcTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @SpyBean
-    private UserService userService; // SpyBean umesto MockBean
+    // FIX: Koristi MockBean da bi se izbegla potreba za UserRepository
+    @MockBean
+    private UserService userService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    // Ažuriran DTO konstruktor da odgovara UserDto (firstName, lastName, email, phone)
+    private final UserDto TEST_USER = new UserDto("Aleksandar", "Golubovic", "alek@example.com", "123456789");
+    private final UserDto ANOTHER_USER = new UserDto("Marko", "Markovic", "marko@example.com", "987654321");
+
     @Test
     void testFindAll() throws Exception {
-        UserDto user1 = new UserDto("Aleksandar", "Golubovic", "alek@example.com", "123456789");
-        UserDto user2 = new UserDto("Marko", "Markovic", "marko@example.com", "987654321");
-
-        doReturn(List.of(user1, user2)).when(userService).findAll();
+        // Koristi standardnu when().thenReturn() sintaksu za List<T>
+        when(userService.findAll()).thenReturn(List.of(TEST_USER, ANOTHER_USER));
 
         mockMvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -49,6 +56,7 @@ public class UserControllerWebMvcTest {
     void testAddUser() throws Exception {
         UserDto newUser = new UserDto("Petar", "Petrovic", "petar@example.com", "111222333");
 
+        // FIX: Koristi doReturn().when() za ResponseEntity
         doReturn(ResponseEntity.ok("User added")).when(userService).addUser(any(UserDto.class));
 
         mockMvc.perform(post("/users/add")
@@ -60,7 +68,8 @@ public class UserControllerWebMvcTest {
 
     @Test
     void testDeleteUser() throws Exception {
-        doReturn(ResponseEntity.ok("User deleted")).when(userService).deleteUser("alek@example.com");
+        // FIX: Koristi doReturn().when() za ResponseEntity
+        doReturn(ResponseEntity.ok("User deleted")).when(userService).deleteUser(eq("alek@example.com"));
 
         mockMvc.perform(delete("/users/delete/alek@example.com"))
                 .andExpect(status().isOk())
@@ -71,6 +80,7 @@ public class UserControllerWebMvcTest {
     void testUpdateUserPhone() throws Exception {
         UserChangePhone changePhone = new UserChangePhone("alek@example.com", "999888777");
 
+        // FIX: Koristi doReturn().when() za ResponseEntity
         doReturn(ResponseEntity.ok("Phone updated")).when(userService).updateUser(any(UserChangePhone.class));
 
         mockMvc.perform(patch("/users/change-phone")
@@ -82,7 +92,8 @@ public class UserControllerWebMvcTest {
 
     @Test
     void testGetUserByEmail() throws Exception {
-        doReturn(ResponseEntity.ok("User exists")).when(userService).findByEmail("alek@example.com");
+        // FIX: Koristi doReturn().when() za ResponseEntity
+        doReturn(ResponseEntity.ok("User exists")).when(userService).findByEmail(eq("alek@example.com"));
 
         mockMvc.perform(get("/users/alek@example.com"))
                 .andExpect(status().isOk())
@@ -91,9 +102,8 @@ public class UserControllerWebMvcTest {
 
     @Test
     void testGetUserById() throws Exception {
-        UserDto userDto = new UserDto("Aleksandar", "Golubovic", "alek@example.com", "123456789");
-
-        doReturn(userDto).when(userService).findById(1);
+        // Koristi standardnu when().thenReturn() sintaksu za DTO
+        when(userService.findById(eq(1))).thenReturn(TEST_USER);
 
         mockMvc.perform(get("/users/id/1").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

@@ -35,4 +35,9 @@ public class OrderController {
     public ResponseEntity<?> deleteOrder(@PathVariable Integer id) {
         return orderService.deleteOrder(id);
     }
+    @PatchMapping("/{id}/quantity")
+    public ResponseEntity<?> updateOrderQuantity(@PathVariable Integer id, @RequestParam Integer quantity) {
+        return orderService.updateOrderQuantity(id, quantity);
+    }
+
 }

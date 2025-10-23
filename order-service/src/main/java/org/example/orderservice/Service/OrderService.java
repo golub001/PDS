@@ -107,4 +107,23 @@ public class OrderService {
         orderRepository.deleteById(id);
         return ResponseEntity.ok("Order deleted successfully");
     }
+    @Transactional
+    public ResponseEntity<?> updateOrderQuantity(Integer id, Integer quantity) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Order with id " + id + " not found");
+        }
+
+        if (quantity == null || quantity < 1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Quantity must be at least 1");
+        }
+
+        Order order = optionalOrder.get();
+        order.setQuantity(quantity);
+        orderRepository.save(order);
+
+        return ResponseEntity.ok(order);
+    }
 }
