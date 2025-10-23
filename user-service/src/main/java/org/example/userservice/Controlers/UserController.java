@@ -40,4 +40,9 @@ public class UserController {
     public ResponseEntity<?> GetId(@PathVariable("email") String email) {
         return userService.findByEmail(email);
     }
+
+    @GetMapping("/id/{id}")
+    public UserDto  getUserById(@PathVariable("id") Integer id) {
+        return userService.findById(id);
+    }
 }

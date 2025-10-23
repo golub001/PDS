@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,5 +65,14 @@ public class UserService {
         user.setPhone(newPhoneDto.getPhone());
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    public UserDto findById(Integer id) {
+        return userRepository.findById(id)
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "User with ID " + id + " not found"
+                ));
     }
 }

@@ -10,4 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface UserFeign {
     @GetMapping("/users/{email}")
     public ResponseEntity<?> GetId(@PathVariable("email") String email);
+
+    @GetMapping("/users/id/{id}")
+    public UserDto  GetById(@PathVariable("id") Integer id);
 }
